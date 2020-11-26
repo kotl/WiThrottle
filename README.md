@@ -30,7 +30,7 @@ IPAddress serverAddress(192,168,1,1);
 ```
 Compile and run, you should see a new client connected in JMRI:
 
-![](https://github.com/lucadentella/WiThrottle/raw/main/images/basic-example.jpg)
+![](https://github.com/lucadentella/WiThrottle/raw/master/images/basic-example.jpg)
 
 ## Public Methods
 
