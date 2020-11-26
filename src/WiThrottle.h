@@ -86,6 +86,7 @@ class WiThrottle
     
 	WiThrottle(bool server = false);
 
+	void setDelegate(WiThrottleDelegate *delegate);
 	void setLogStream(Stream *console);
 
 	void connect(Stream *stream);
@@ -118,7 +119,7 @@ class WiThrottle
 
     void emergencyStop();
 
-    WiThrottleDelegate *delegate = NULL;
+    
 
   private:
   
@@ -127,6 +128,8 @@ class WiThrottle
 	Stream *stream;
     Stream *console;
 	NullStream nullStream;
+	
+	WiThrottleDelegate *delegate = NULL;
 
     bool processCommand(char *c, int len);
     bool processLocomotiveAction(char *c, int len);

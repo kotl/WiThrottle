@@ -15,6 +15,7 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
  - Dependencies with external libraries (Chrono.h, ArduinoTime.h, TimeLib.h) removed
  - Added NullStream class to disable (by default) logging
  - Changed begin() method to setLogStream()
+ - Added a setter method for delegate class: setDelegate()
 
 ## Included examples
 
@@ -31,6 +32,14 @@ IPAddress serverAddress(192,168,1,1);
 Compile and run, you should see a new client connected in JMRI:
 
 ![](https://github.com/lucadentella/WiThrottle/raw/master/images/basic-example.jpg)
+
+### WiThrottle_Delegate
+
+Example to show how to implement a delegate class to handle callbacks.
+
+Compile and run, you should see in Serial monitor the server version, printed by ```void receivedVersion(String version)``` method:
+
+![](https://github.com/lucadentella/WiThrottle/raw/master/images/delegate-example.jpg)
 
 ## Public Methods
 

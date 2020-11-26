@@ -81,6 +81,14 @@ void WiThrottle::init() {
     resetChangeFlags();
 }
 
+
+// Set the delegate instance for callbasks
+void WiThrottle::setDelegate(WiThrottleDelegate *delegate) {
+	
+    this->delegate = delegate;
+}
+
+
 // Set the Stream used for logging
 void WiThrottle::setLogStream(Stream *console) {
 	
