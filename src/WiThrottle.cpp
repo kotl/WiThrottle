@@ -41,22 +41,17 @@ static const int MAX_SPEED = 126;
 
 
 WiThrottle::WiThrottle(bool server) {
-    //server(server),
-    //heartbeatTimer(Chrono::SECONDS),
-    //fastTimeTimer(Chrono::SECONDS),
-    //currentSpeed(0),
-    //speedSteps(0),
-    //currentDirection(Forward)
-    this->server = server;
-	init();
-}
 
-// init the WiThrottle instance
-void WiThrottle::init() {
-	
+	// store server/client
+    this->server = server;
+		
 	// init streams
     stream = &nullStream;
 	console = &nullStream;
+}
+
+// init the WiThrottle instance after connection to the server
+void WiThrottle::init() {
     
 	// allocate input buffer and init position variable
 	memset(inputbuffer, 0, sizeof(inputbuffer));
