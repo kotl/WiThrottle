@@ -43,9 +43,9 @@ Compile and run, you should see in Serial monitor the server version, printed by
 
 ### WiThrottle_FastTime
 
-Example to show how to get the fasttime from WiThrottle server, and how to transform the timestamp in HOUR:MINUTE format.
+Example to show how to get the fasttime from WiThrottle server, and how to transform the timestamp in HOUR:MINUTE format. As explained above, I removed all the external dependences: the library returns a timestamp (method ```getCurrentFastTime()```) and you can choose your preferred library (or none) to parse it.
 
-You need the ![```Time``` library](https://github.com/PaulStoffregen/Time), which can be installed through IDE Library Manager.
+For this example you need the [```Time``` library](https://github.com/PaulStoffregen/Time), which can be installed through IDE Library Manager.
 
 Compile and run. Use a proper terminal (MobaXterm in my screenshot) to see the time updated in the same line:
 
