@@ -26,8 +26,8 @@
  *
  */
 
-#include <ArduinoTime.h>
-#include <TimeLib.h>
+//#include <ArduinoTime.h>
+//#include <TimeLib.h>
 
 #include "WiThrottle.h"
 
@@ -40,33 +40,50 @@ static const int MIN_SPEED = 0;
 static const int MAX_SPEED = 126;
 
 
-WiThrottle::WiThrottle(bool server):
-    server(server),
-    heartbeatTimer(Chrono::SECONDS),
-    fastTimeTimer(Chrono::SECONDS),
-    currentSpeed(0),
-    speedSteps(0),
-    currentDirection(Forward)
-{
-    init();
+WiThrottle::WiThrottle(bool server) {
+    //server(server),
+    //heartbeatTimer(Chrono::SECONDS),
+    //fastTimeTimer(Chrono::SECONDS),
+    //currentSpeed(0),
+    //speedSteps(0),
+    //currentDirection(Forward)
+    this->server = server;
+	init();
 }
 
-void
-WiThrottle::init()
-{
-    stream = NULL;
-    memset(inputbuffer, 0, sizeof(inputbuffer));
-    nextChar = 0;
+// init the WiThrottle instance
+void WiThrottle::init() {
+	
+	// init streams
+    stream = &nullStream;
+	console = &nullStream;
+    
+	// allocate input buffer and init position variable
+	memset(inputbuffer, 0, sizeof(inputbuffer));
+	nextChar = 0;
+	
+	// init heartbeat
+	heartbeatTimer = millis();
     heartbeatPeriod = 0;
+	
+	// init fasttime
+	fastTimeTimer = millis();
     currentFastTime = 0.0;
     currentFastTimeRate = 0.0;
-    locomotiveSelected = false;
+    
+	// init global variables
+	locomotiveSelected = false;
+	currentSpeed = 0;
+	speedSteps = 0;
+	currentDirection = Forward;
+	
+	// init change flags
     resetChangeFlags();
 }
 
-void
-WiThrottle::begin(Stream *console)
-{
+// Set the Stream used for logging
+void WiThrottle::setLogStream(Stream *console) {
+	
     this->console = console;
 }
 
@@ -162,15 +179,19 @@ WiThrottle::sendCommand(String cmd)
 }
 
 
-bool
-WiThrottle::checkFastTime()
-{
+bool WiThrottle::checkFastTime() {
+	
     bool changed = true;
-    if (fastTimeTimer.hasPassed(1)) { // one real second
-        fastTimeTimer.restart();
-        if (currentFastTimeRate == 0.0) {
-            clockChanged = false;
-        }
+    
+	// check if a second has passed
+	if ((millis() - fastTimeTimer) > 1000) { 
+        
+		fastTimeTimer = millis();
+        
+		// no FastTime
+		if (currentFastTimeRate == 0.0) clockChanged = false;
+		
+		// FastTime, update accordingly to rate
         else {
             currentFastTime += currentFastTimeRate;
             clockChanged = true;
@@ -181,7 +202,7 @@ WiThrottle::checkFastTime()
 }
 
 
-int
+/*int
 WiThrottle::fastTimeHours()
 {
     time_t now = (time_t) currentFastTime;
@@ -194,14 +215,18 @@ WiThrottle::fastTimeMinutes()
 {
     time_t now = (time_t) currentFastTime;
     return minute(now);
+}*/
+
+
+double WiThrottle::getCurrentFastTime() {
+
+	return currentFastTime;
 }
 
-
-float
-WiThrottle::fastTimeRate()
-{
+float WiThrottle::getFastTimeRate() {
     return currentFastTimeRate;
 }
+
 
 
 bool
@@ -578,18 +603,19 @@ WiThrottle::processStealNeeded(char *c, int len)
 
 
 
-bool
-WiThrottle::checkHeartbeat()
-{
-    if (heartbeatPeriod > 0 && heartbeatTimer.hasPassed(0.5 * heartbeatPeriod)) {
-        heartbeatTimer.restart();
+
+bool WiThrottle::checkHeartbeat() {
+	
+	// if heartbeat is required and half of heartbeat period has passed, send a heartbeat and reset the timer
+    if ((heartbeatPeriod > 0) && ((millis() - heartbeatTimer) > 0.5 * heartbeatPeriod * 1000)) {
 
         sendCommand("*");
+		heartbeatTimer = millis();
+		
         return true;
     }
-    else {
-        return false;
-    }
+	
+    else return false;
 }
 
 

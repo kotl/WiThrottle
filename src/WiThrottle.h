@@ -30,7 +30,7 @@
 #define WITHROTTLE_H
 
 #include "Arduino.h"
-#include "Chrono.h"
+//#include "Chrono.h"
 
 typedef enum Direction {
     Reverse = 0,
@@ -43,7 +43,17 @@ typedef enum TrackPower {
     PowerUnknown = 2
 } TrackPower;
 
-
+class NullStream : public Stream {
+  
+  public:
+	NullStream() {}
+	int available() { return 0; }
+	void flush() {}
+	int peek() { return -1; }
+	int read() { return -1; }
+	size_t write(uint8_t c) { return 1; }
+	size_t write(const uint8_t *buffer, size_t size) { return size; }
+};
 
 class WiThrottleDelegate
 {
@@ -73,11 +83,12 @@ class WiThrottleDelegate
 class WiThrottle
 {
   public:
-    WiThrottle(bool server = false);
+    
+	WiThrottle(bool server = false);
 
-    void begin(Stream *console);
+	void setLogStream(Stream *console);
 
-    void connect(Stream *stream);
+	void connect(Stream *stream);
     void disconnect();
 
     void setDeviceName(String deviceName);
@@ -85,9 +96,10 @@ class WiThrottle
 
     bool check();
 
-    int fastTimeHours();
-    int fastTimeMinutes();
-    float fastTimeRate();
+    //int fastTimeHours();
+    //int fastTimeMinutes();
+	double getCurrentFastTime();
+    float getFastTimeRate();
     bool clockChanged;
 
     void requireHeartbeat(bool needed=true);
@@ -109,9 +121,12 @@ class WiThrottle
     WiThrottleDelegate *delegate = NULL;
 
   private:
+  
     bool server;
-    Stream *stream;
+    
+	Stream *stream;
     Stream *console;
+	NullStream nullStream;
 
     bool processCommand(char *c, int len);
     bool processLocomotiveAction(char *c, int len);
@@ -137,10 +152,12 @@ class WiThrottle
     char inputbuffer[1024];
     ssize_t nextChar;  // where the next character to be read goes in the buffer
 
-    Chrono heartbeatTimer;
+    //Chrono heartbeatTimer;
+	unsigned long heartbeatTimer;
     int heartbeatPeriod;
 
-    Chrono fastTimeTimer;
+    //Chrono fastTimeTimer;
+	unsigned long fastTimeTimer;
     double currentFastTime;
     float currentFastTimeRate;
 

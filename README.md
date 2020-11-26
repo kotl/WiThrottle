@@ -10,6 +10,28 @@ First of all, this library implements WiThrottle in a non-blocking fashion.  Aft
 
 These patterns (Dependency Injection and Delegation) allow you to keep the different parts of your sketch from becoming too intertwined with each other.  Nothing in the code that manages the pushbuttons or speed knobs needs to have any detailed knowledge of the WiThrottle network protocol.
 
+## Differences from the original library
+
+ - Dependencies with external libraries (Chrono.h, ArduinoTime.h, TimeLib.h) removed
+ - Added NullStream class to disable (by default) logging
+ - Changed begin() method to setLogStream()
+
+## Included examples
+
+### WiThrottle_Basic
+
+Basic example to implement a WiThrottle client and connect to a server (with static IP).
+
+Change the WiFi settings and enter the IP address of the computer running JMRI (or other WiThrottle server):
+```
+const char* ssid = "MySSID";
+const char* password =  "MyPWD";
+IPAddress serverAddress(192,168,1,1);
+```
+Compile and run, you should see a new client connected in JMRI:
+
+![](https://github.com/lucadentella/WiThrottle/raw/main/images/basic-example.jpg)
+
 ## Public Methods
 
 ### Basic Setup & Use
