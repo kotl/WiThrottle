@@ -31,13 +31,9 @@
 
 #include "WiThrottle.h"
 
-
-#define NEWLINE '\n'
-#define CR '\r'
-#define PROPERTY_SEPARATOR "<;>"
-
 static const int MIN_SPEED = 0;
 static const int MAX_SPEED = 126;
+static const char *rosterSegmentDesc[] = {"Name", "Address", "Length"};
 
 
 WiThrottle::WiThrottle(bool server) {
@@ -326,10 +322,22 @@ WiThrottle::processCommand(char *c, int len)
         processProtocolVersion(c+2, len-2);
         return true;
     }
+    else if (len > 2 && c[0]=='H' && c[1]=='T') {
+        processServerType(c+2, len-2);
+        return true;
+    }
+    else if (len > 2 && c[0]=='H' && c[1]=='t') {
+        processServerDescription(c+2, len-2);
+        return true;
+    }	
     else if (len > 2 && c[0]=='P' && c[1]=='W') {
         processWebPort(c+2, len-2);
         return true;
     }
+    else if (len > 2 && c[0]=='R' && c[1]=='L') {
+        processRosterList(c+2, len-2);
+        return true;
+    }	
     else if (len > 6 && c[0]=='M' && c[1]=='T' && c[2]=='S') {
         processStealNeeded(c+3, len-3);
         return true;
@@ -427,6 +435,22 @@ WiThrottle::processProtocolVersion(char *c, int len)
     }
 }
 
+void WiThrottle::processServerType(char *c, int len) {
+	
+    if (delegate && len > 0) {
+        String serverType = String(c);
+        delegate->receivedServerType(serverType);
+    }
+}
+
+void WiThrottle::processServerDescription(char *c, int len) {
+	
+    if (delegate && len > 0) {
+        String serverDescription = String(c);
+        delegate->receivedServerDescription(serverDescription);
+    }
+}
+
 void
 WiThrottle::processWebPort(char *c, int len)
 {
@@ -438,7 +462,51 @@ WiThrottle::processWebPort(char *c, int len)
     }
 }
 
+void WiThrottle::processRosterList(char *c, int len) {
 
+	String s(c);
+
+	// get the number of entries
+	int entries = s.substring(0, 1).toInt();
+	console->print("Entries in roster: "); console->println(entries);
+	
+	// if set, call the delegate method
+	if (delegate) delegate->receivedRosterEntries(entries);	
+	
+	// loop
+	int entryStartPosition = 4; //ignore the first entry separator
+	for(int i = 0; i < entries; i++) {
+	
+		// get element
+		int entrySeparatorPosition = s.indexOf(ENTRY_SEPARATOR, entryStartPosition);
+		String entry = s.substring(entryStartPosition, entrySeparatorPosition);
+		console->print("Entry: "); console->println(i + 1);
+		
+		// split element in segments and parse them		
+		String name;
+		int address;
+		char length;
+		int segmentStartPosition = 0;
+		for(int j = 0; j < 3; j++) {
+		
+			// get segment
+			int segmentSeparatorPosition = entry.indexOf(SEGMENT_SEPARATOR, segmentStartPosition);
+			String segment = entry.substring(segmentStartPosition, segmentSeparatorPosition);
+			console->print(rosterSegmentDesc[j]); console->print(": "); console->println(segment);
+			segmentStartPosition = segmentSeparatorPosition + 3;
+			
+			// parse the segments
+			if(j == 0) name = segment;
+			else if(j == 1) address = segment.toInt();
+			else if(j == 2) length = segment[0];
+		}
+		
+		// if set, call the delegate method
+		if(delegate) delegate->receivedRosterEntry(i, name, address, length);
+		
+		entryStartPosition = entrySeparatorPosition + 3;
+	}
+}
 
 // the string passed in will look 'F03' (meaning turn off Function 3) or
 // 'F112' (turn on function 12)
@@ -639,7 +707,7 @@ WiThrottle::addLocomotive(String address)
     bool ok = false;
 
     if (address[0] == 'S' || address[0] == 'L') {
-        String rosterName = address;  // for now -- could look this up...
+        String rosterName = address; 
         String cmd = "MT+" + address + PROPERTY_SEPARATOR + rosterName;
         sendCommand(cmd);
 

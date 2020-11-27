@@ -30,7 +30,14 @@
 #define WITHROTTLE_H
 
 #include "Arduino.h"
-//#include "Chrono.h"
+
+// Protocol special characters
+// see: https://www.jmri.org/help/en/package/jmri/jmrit/withrottle/Protocol.shtml#StringParsing
+#define PROPERTY_SEPARATOR 	"<;>"
+#define ENTRY_SEPARATOR 	"]\\["
+#define SEGMENT_SEPARATOR 	"}|{"
+#define NEWLINE 			'\n'
+#define CR 					'\r'
 
 typedef enum Direction {
     Reverse = 0,
@@ -58,7 +65,12 @@ class NullStream : public Stream {
 class WiThrottleDelegate
 {
   public:
+  
     virtual void receivedVersion(String version) {}
+	virtual void receivedServerType(String type) {}
+	virtual void receivedServerDescription(String description) {}
+	virtual void receivedRosterEntries(int rosterSize) {}
+	virtual void receivedRosterEntry(int index, String name, int address, char length) {}
 
     virtual void fastTimeChanged(uint32_t time) { }
     virtual void fastTimeRateChanged(double rate) { }
@@ -136,7 +148,10 @@ class WiThrottle
     bool processFastTime(char *c, int len);
     bool processHeartbeat(char *c, int len);
     void processProtocolVersion(char *c, int len);
+    void processServerType(char *c, int len);
+    void processServerDescription(char *c, int len);	
     void processWebPort(char *c, int len);
+	void processRosterList(char *c, int len);
     void processTrackPower(char *c, int len);
     void processFunctionState(const String& functionData);
     void processSpeedSteps(const String& speedStepData);
