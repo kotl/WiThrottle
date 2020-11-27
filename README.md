@@ -51,6 +51,14 @@ Compile and run. Use a proper terminal (MobaXterm in my screenshot) to see the t
 
 ![](https://github.com/lucadentella/WiThrottle/raw/master/images/fastclock-example.jpg)
 
+### WiThrottle_Roster
+
+Example to show how to get the list of locomotives in the roster. The library parses the roster message (RLx) but **doesn't** store the list. Instead, it offers two callbacks to get the number of entries and, for each entry, name / address / length (**S**hort|**L**ong).
+
+Compile and run, you should see in the Serial monitor the list of locomotives as defined in JMRI:
+
+![](https://github.com/lucadentella/WiThrottle/raw/master/images/roster-example.jpg)
+
 ## Public Methods
 
 ### Basic Setup & Use
