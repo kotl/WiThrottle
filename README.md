@@ -12,10 +12,11 @@ These patterns (Dependency Injection and Delegation) allow you to keep the diffe
 
 ## Differences from the original library
 
- - Dependencies with external libraries (Chrono.h, ArduinoTime.h, TimeLib.h) removed
+ - Removed dependencies with external libraries (Chrono.h, ArduinoTime.h, TimeLib.h) 
  - Added NullStream class to disable (by default) logging
  - Changed begin() method to setLogStream()
  - Added a setter method for delegate class: setDelegate()
+ - Added the ability to parse roster messages and to receive the roster list via delegate class
 
 ## Included examples
 
