@@ -848,3 +848,11 @@ WiThrottle::setFunction(int funcNum, bool pressed)
 
     sendCommand(cmd);
 }
+
+void WiThrottle::setTrackPower(TrackPower state) {
+
+    String cmd = "PPA";
+    cmd.concat(state);
+
+    sendCommand(cmd);	
+}

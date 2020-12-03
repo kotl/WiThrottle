@@ -128,6 +128,8 @@ class WiThrottle
     int getSpeed();
     bool setDirection(Direction direction);
     Direction getDirection();
+	
+	void setTrackPower(TrackPower state);
 
     void emergencyStop();
 
