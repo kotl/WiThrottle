@@ -358,6 +358,7 @@ WiThrottle::processCommand(char *c, int len)
         console->printf("unknown command '%s'\n", c);
         // all other commands are explicitly ignored
     }
+    return changed;
 }
 
 
