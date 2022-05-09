@@ -173,6 +173,7 @@ WiThrottle::sendCommand(String cmd)
         if (server) {
             stream->println("");
         }
+        stream->flush();
         console->print("==> "); console->println(cmd);
     }
 }
